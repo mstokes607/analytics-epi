@@ -7,7 +7,7 @@ from matplotlib import pyplot as plt
 from lifelines.datasets import load_lung
 lungdata = load_lung()
 
-results_folder = "/Users/michaelstokes/miniconda2/envs/data_analytics_tools/data_analytics_tools/results/"
+results_folder = "~data_analytics_tools/results/"
 
 # recode some variables for clarity
 lungdata['sex_recode'] = np.where(lungdata['sex'] == 1, 'Male', 'Female') 
