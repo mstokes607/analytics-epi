@@ -59,6 +59,7 @@ for group in strata:
 ```
 The last step is to concatenate the tables for each subgroup horizontally and then to save the results as a .csv file.
 ```python
+results_folder = "~data_analytics_tools/results/"
 result = pd.concat([tables[0], tables[1], tables[2]], axis=1, sort=False)
 result.to_csv(results_folder + 'descriptive_table.csv')
 ```
