@@ -62,4 +62,5 @@ The last step is to concatenate the tables for each subgroup horizontally and th
 result = pd.concat([tables[0], tables[1], tables[2]], axis=1, sort=False)
 result.to_csv(results_folder + 'descriptive_table.csv')
 ```
+
 ![alt text](https://github.com/mstokes607/analytics-epi/blob/master/screenshots4example/descriptive_table.png)
