@@ -22,7 +22,7 @@ Next, we'll create new variables with appropriate values so the data in our tabl
 lungdata['sex_recode'] = np.where(lungdata['sex'] == 1, 'Male', 'Female') 
 lungdata['status_recode'] = np.where(lungdata['status'] == 1, 'Alive', 'Dead')
 ```
-We create the vars: *male*, *female*, and *all* to enable the selection of the patient subgroups from the data set. Labels for the table along with the strata variables are stored as list. Finally, an empty list (*tables*) for storing the descriptive stats for each subgroup is initialized. We'll populate the list *tables* in the next step.
+We create the vars: *male*, *female*, and *all* to enable the selection of the patient subgroups from the data set. Labels for the table along with the strata variables are stored as a list. Finally, an empty list (*tables*) for storing the descriptive stats for each subgroup is initialized. We'll populate the list *tables* in the next step.
 ```python
 male = (lungdata['sex_recode'] == 'Male')
 female = ~male
@@ -32,9 +32,9 @@ labels = ['All', 'Male', 'Female']
 tables = [] # tables[0] == All, tables[1] = Male, etc.
 i=0
 ```
-The functions imported from [utilities.py](utilities.py) are called in the order that we want to assemble the stats in the table.
+The functions imported from [utilities.py](utilities.py) are called in the same order as we want the stats to appear in our table.
 A for ... loop is used to cycle through each subgroup or stratum of data. In this example, we generate table stats for the full group of patients (All)
-and for males vs. females. Finally, the individual table stats are concatenated together vertically and stored in the *tables* var, which
+and then for males and females. Finally, the individual table stats are concatenated together vertically and stored in the *tables* var, which
 is simply a list of dataframes corresonding to each patient group.
 ```python
 for group in strata:  
@@ -62,5 +62,4 @@ The last step is to concatenate the tables for each subgroup horizontally and th
 result = pd.concat([tables[0], tables[1], tables[2]], axis=1, sort=False)
 result.to_csv(results_folder + 'descriptive_table.csv')
 ```
-
 ![alt text](https://github.com/mstokes607/analytics-epi/blob/master/screenshots4example/descriptive_table.png)
