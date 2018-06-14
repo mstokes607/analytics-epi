@@ -64,3 +64,12 @@ result = pd.concat([tables[0], tables[1], tables[2]], axis=1, sort=False)
 result.to_csv(results_folder + 'descriptive_table.csv')
 ```
 ![alt text](https://github.com/mstokes607/analytics-epi/blob/master/screenshots4example/descriptive_table.png)
+# survival analysis
+In the next part of this example, we will compare the rate of death among males vs. females using the Kaplan-Meier survival function. 
+First, let's create the necessary vars in order to fit our data.
+```python
+T = lungdata['time']
+lungdata['status_km'] = np.where(lungdata['status'] == 2, 1, 0) # recode status vars for lifelines package
+E = lungdata['status_km'] # 1 = dead , # 0 = censored
+```
+We then 
