@@ -2,11 +2,11 @@
 Epidemiological analyses using python, pandas, and lifelines
 # data
 The data used for this example is the NCCTG Lung Cancer Dataset. It is publicly available and included as part of lifelines. 
-The data examines survival in patients with advanced lung cancer from the North Central Cancer Treatment Group. A description of the 
-variables included in the data is available [here](http://stat.ethz.ch/R-manual/R-patched/library/survival/html/lung.html). 
+The survival of patients with advanced lung cancer from the North Central Cancer Treatment Group is examined. A description of the 
+variables included in the data is available [here](http://stat.ethz.ch/R-manual/R-patched/library/survival/html/lung.html). In this example we'll examine the patient characteristics in males vs. females, and then later investigate whether there are survival differences between these groups.
 # creating tables
-In the first part of this example we will create tables using functions from [utilities.py](utilities.py). 
-The statistics for the table are stored in individual pandas dataframes and then concatenated together to create the table.
+The first part of this example shows how to create tables using functions from [utilities.py](utilities.py). 
+The general approach is to store statistics for the table in individual pandas dataframes and then concatenate them together to create the full table for presentation. 
 First, lets load the data and import our modules and functions.
 ```python
 import pandas as pd
@@ -17,12 +17,12 @@ from matplotlib import pyplot as plt
 from lifelines.datasets import load_lung
 lungdata = load_lung()
 ```
-Next, we'll create new variables with appropriate values so the data in our table makes sense.
+Next, we create new variables with appropriate values so the info in our table is formatted coherently.
 ```python
 lungdata['sex_recode'] = np.where(lungdata['sex'] == 1, 'Male', 'Female') 
 lungdata['status_recode'] = np.where(lungdata['status'] == 1, 'Alive', 'Dead')
 ```
-We create the vars: *male*, *female*, and *all* to enable the selection of the patient subgroups from the data set. Labels for the table along with the strata variables are stored as a list. Finally, an empty list (*tables*) for storing the descriptive stats for each subgroup is initialized. We'll populate the list *tables* in the next step.
+We create the vars: *male*, *female*, and *all* to enable the selection of the patient subgroups from lung data. Labels for the table along with the strata variables are stored as a list. Finally, an empty list (*tables*) for storing the descriptive stats for each subgroup is initialized. We'll populate the list *tables* in the next step.
 ```python
 male = (lungdata['sex_recode'] == 'Male')
 female = ~male
@@ -65,11 +65,20 @@ result.to_csv(results_folder + 'descriptive_table.csv')
 ```
 ![alt text](https://github.com/mstokes607/analytics-epi/blob/master/screenshots4example/descriptive_table.png)
 # survival analysis
-In the next part of this example, we will compare the rate of death among males vs. females using the Kaplan-Meier survival function. 
+The next part of this example compares overall survival among males vs. females using the Kaplan-Meier survival function. 
 First, let's create the necessary vars in order to fit our data.
 ```python
 T = lungdata['time']
 lungdata['status_km'] = np.where(lungdata['status'] == 2, 1, 0) # recode status vars for lifelines package
 E = lungdata['status_km'] # 1 = dead , # 0 = censored
 ```
-We then 
+We then import the necessary objects from lifelines. The KaplanMeierFitter is used to fit the survival model to our data and to help plot the survival curves. The logrank_test is used to statistically compare survival among males vs. females. 
+```python
+from lifelines import KaplanMeierFitter 
+# all patients
+kmf = KaplanMeierFitter()
+kmf.fit(T, E)
+from lifelines.statistics import logrank_test
+male = (lungdata['sex_recode'] == 'Male') # to stratify population into males and ~males (females)
+results = logrank_test(T[male], T[~male], E[male], E[~male], alpha=.99)
+```
