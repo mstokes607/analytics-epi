@@ -72,7 +72,7 @@ T = lungdata['time']
 lungdata['status_km'] = np.where(lungdata['status'] == 2, 1, 0) # recode status vars for lifelines package
 E = lungdata['status_km'] # 1 = dead , # 0 = censored
 ```
-We then import the necessary objects from lifelines. The KaplanMeierFitter is used to fit the survival model to our data and to help plot the survival curves. The logrank_test is used to statistically compare survival among males vs. females. 
+We then import the necessary objects from lifelines. *KaplanMeierFitter* is used to fit the survival model to our data and to help plot the survival curves. *logrank_test* is used to statistically compare survival among males vs. females. 
 ```python
 from lifelines import KaplanMeierFitter 
 # all patients
@@ -86,4 +86,22 @@ A call to the function *KM_plot_double* from [utilities.py](utilities.py) create
 ```python
 KM_plot_double(kmf,strat=male,logrank=results, survtime=T, events=E, xlabel='Days of follow-up', legend_labels = ['Male', 'Female'],
 			   ylabel='Survival probability',title='Overall survival in lung cancer patients')
+```
+# Cox proportional hazards regression
+Finally, Cox PH regression is used to determine whether females have better survival compared to males after taking into account other important characteristics such as age and weight loss during the first 6 months. 
+```python
+from lifelines import CoxPHFitter
+cph = CoxPHFitter()
+
+lungdata['age_grp'] = np.where(lungdata['age'] >= 65, 1, 0)
+lungdata['sex'] = np.where(lungdata['sex'] == 1, 1, 2)
+
+lung_cph = lungdata[['time', 'status_km', 'sex', 'age', 'wt.loss']] # only keep vars needed for model
+lung_cph = lung_cph[lung_cph['wt.loss'].notna()] # drop nan values so the model can converge
+
+cph.fit(lung_cph, 'time', event_col='status_km')
+cph.print_summary()
+
+# extract stats for the multivariate table & save as .csv format
+cph.summary.to_csv(results_folder + 'multivariate_table.csv')
 ```
