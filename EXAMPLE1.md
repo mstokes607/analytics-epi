@@ -82,3 +82,8 @@ from lifelines.statistics import logrank_test
 male = (lungdata['sex_recode'] == 'Male') # to stratify population into males and ~males (females)
 results = logrank_test(T[male], T[~male], E[male], E[~male], alpha=.99)
 ```
+A call to the function *KM_plot_double* from [utilities.py](utilities.py) creates the survival plot comparing males vs. females with custom styling using matplotlib, including presentation of the log-rank p-value directly on the graph.
+```python
+KM_plot_double(kmf,strat=male,logrank=results, survtime=T, events=E, xlabel='Days of follow-up', legend_labels = ['Male', 'Female'],
+			   ylabel='Survival probability',title='Overall survival in lung cancer patients')
+```
